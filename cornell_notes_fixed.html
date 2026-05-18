@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Nunito:wght@400;500;600;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1a2e;--ink2:#3a3a5c;--ink3:#6b6b8a;
+  --paper:#faf9f6;--paper2:#f2f0eb;--paper3:#e8e4dc;
+  --accent:#c0392b;--border:#d4cfc4;--line-h:32px;
+}
+body{font-family:'Nunito',sans-serif;background:var(--paper2);color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+
+.app-header{background:var(--ink);padding:0 16px;display:flex;align-items:center;gap:12px;height:52px;flex-shrink:0;position:sticky;top:0;z-index:100}
+.logo{font-family:'Instrument Serif',serif;color:white;font-size:18px;white-space:nowrap}
+.logo span{color:#e74c3c}
+.header-meta{flex:1;display:flex;gap:6px;align-items:center}
+.meta-field{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;padding:4px 8px;border-radius:5px;font-size:12px;font-family:'Nunito',sans-serif;outline:none;width:150px}
+.meta-field::placeholder{color:rgba(255,255,255,0.4)}
+.meta-field.wide{width:220px}
+.export-group{display:flex;gap:5px}
+.btn-export{display:flex;align-items:center;gap:4px;padding:5px 11px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:'Nunito',sans-serif}
+.btn-docx{background:#2b579a;color:white}.btn-docx:hover{background:#1e3f73}
+.btn-pdf{background:#b91c1c;color:white}.btn-pdf:hover{background:#991b1b}
+.btn-print{background:rgba(255,255,255,0.12);color:white;border:1px solid rgba(255,255,255,0.25)}.btn-print:hover{background:rgba(255,255,255,0.22)}
+
+.toolbar{background:var(--paper);border-bottom:1px solid var(--border);padding:5px 14px;display:flex;align-items:center;gap:3px;flex-wrap:wrap;flex-shrink:0;position:sticky;top:52px;z-index:90}
+.toolbar-sep{width:1px;height:22px;background:var(--border);margin:0 3px}
+.tb-btn{display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:5px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:600;color:var(--ink2);transition:all .12s;position:relative;font-family:'Nunito',sans-serif}
+.tb-btn:hover{background:var(--paper3);color:var(--ink)}
+.tb-btn[title]:hover::after{content:attr(title);position:absolute;bottom:-26px;left:50%;transform:translateX(-50%);background:var(--ink);color:white;font-size:10px;padding:2px 6px;border-radius:4px;white-space:nowrap;pointer-events:none;z-index:200;font-family:'Nunito',sans-serif}
+.tb-select{height:28px;padding:0 5px;border:1px solid var(--border);border-radius:5px;background:white;color:var(--ink2);font-size:12px;cursor:pointer;outline:none;font-family:'Nunito',sans-serif}
+
+.resize-bar{background:var(--paper);border-bottom:1px solid var(--border);padding:4px 14px;display:flex;align-items:center;gap:14px;flex-shrink:0;font-size:11px;color:var(--ink3)}
+.resize-bar label{display:flex;align-items:center;gap:5px;cursor:pointer}
+.resize-bar input[type=range]{width:80px;cursor:pointer;accent-color:var(--accent)}
+.resize-val{font-weight:600;color:var(--ink2);min-width:26px}
+
+.notes-container{flex:1;padding:20px;display:flex;justify-content:center;overflow:auto}
+.cornell-page{width:100%;max-width:860px;background:white;box-shadow:0 2px 16px rgba(0,0,0,0.1);border-radius:4px;display:flex;flex-direction:column}
+
+.page-header{border-bottom:3px solid var(--accent);padding:12px 18px 10px;background:white}
+.page-header-grid{display:grid;grid-template-columns:1fr auto auto;gap:6px 14px;align-items:end}
+.ph-field{display:flex;flex-direction:column;gap:2px}
+.ph-label{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink3)}
+.ph-input{border:none;border-bottom:1px solid var(--border);padding:2px 0;font-size:13px;color:var(--ink);outline:none;background:transparent;font-family:'Nunito',sans-serif;width:100%}
+.ph-input:focus{border-bottom-color:var(--accent)}
+
+.cornell-body{display:flex;flex:1;min-height:0}
+.col-cue{border-right:2px solid var(--accent);background:white;position:relative;flex-shrink:0;background-image:repeating-linear-gradient(transparent,transparent calc(var(--line-h) - 1px),#e8e8f0 calc(var(--line-h) - 1px),#e8e8f0 var(--line-h));background-attachment:local}
+.col-cue-label,.col-notes-label{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:7px 10px 4px;background:white;border-bottom:1px solid #f0eeea}
+.col-cue-label{color:var(--accent)}
+.col-notes-label{color:var(--ink3)}
+.col-notes{flex:1;background:white;background-image:repeating-linear-gradient(transparent,transparent calc(var(--line-h) - 1px),#e8e8f0 calc(var(--line-h) - 1px),#e8e8f0 var(--line-h));background-attachment:local}
+
+.note-editor{padding:8px 12px;min-height:440px;font-size:14px;line-height:1.85;color:var(--ink);font-family:'Nunito',sans-serif;outline:none;caret-color:var(--accent);position:relative}
+.cue-editor{font-size:13px;color:var(--ink2)}
+[contenteditable][data-ph="1"]::before{content:attr(data-placeholder);color:#b0adb8;font-style:italic;pointer-events:none}
+
+.summary-section{border-top:2px solid var(--accent);background:white}
+.summary-label{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);padding:7px 14px 0}
+.sum-editor{padding:5px 14px 12px;min-height:100px;font-size:14px;line-height:1.7;color:var(--ink);font-family:'Nunito',sans-serif;outline:none;caret-color:var(--accent);position:relative}
+
+.status-bar{background:var(--paper2);border-top:1px solid var(--border);padding:5px 20px;display:flex;gap:18px;align-items:center;font-size:11px;color:var(--ink3);flex-shrink:0}
+.status-bar b{color:var(--ink2);font-weight:600}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:999;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-box{background:white;border-radius:10px;padding:22px;width:400px;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.18)}
+.modal-title{font-family:'Instrument Serif',serif;font-size:20px;margin-bottom:14px}
+.shortcut-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--paper3);font-size:13px}
+.shortcut-row:last-child{border-bottom:none}
+.shortcut-row kbd{background:var(--paper2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:11px;color:var(--ink2)}
+.modal-close{float:right;background:var(--paper2);border:none;border-radius:5px;padding:4px 10px;cursor:pointer;font-size:12px;color:var(--ink2);font-family:'Nunito',sans-serif}
+
+#toast{position:fixed;bottom:55px;left:50%;transform:translateX(-50%);background:#1a1a2e;color:white;padding:7px 16px;border-radius:20px;font-size:13px;z-index:9999;font-family:'Nunito',sans-serif;opacity:0;transition:opacity .3s;pointer-events:none}
+
+@media print{.app-header,.toolbar,.resize-bar,.status-bar{display:none!important}.notes-container{padding:0}.cornell-page{box-shadow:none;max-width:100%}body{background:white}}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="logo">Cornell <span>Notes</span></div>
+  <div class="header-meta">
+    <input class="meta-field wide" id="docTitle" placeholder="Tiêu đề tài liệu…">
+    <input class="meta-field" id="docSubject" placeholder="Môn học / Chủ đề">
+    <input class="meta-field" id="docDate" type="date" style="width:120px">
+  </div>
+  <div class="export-group">
+    <button class="btn-export btn-print" onclick="window.print()">🖨 In</button>
+    <button class="btn-export btn-docx" id="btnDocx">📄 .docx</button>
+    <button class="btn-export btn-pdf" id="btnPdf">📑 .pdf</button>
+  </div>
+</header>
+
+<div class="toolbar">
+  <button class="tb-btn" title="Đậm (Ctrl+B)" onclick="fmt('bold')"><b>B</b></button>
+  <button class="tb-btn" title="Nghiêng (Ctrl+I)" onclick="fmt('italic')"><i>I</i></button>
+  <button class="tb-btn" title="Gạch chân (Ctrl+U)" onclick="fmt('underline')" style="text-decoration:underline">U</button>
+  <button class="tb-btn" title="Gạch ngang" onclick="fmt('strikethrough')" style="text-decoration:line-through">S</button>
+  <div class="toolbar-sep"></div>
+  <select class="tb-select" onchange="setFontSize(this.value)">
+    <option value="">Cỡ</option>
+    <option value="11px">11</option><option value="12px">12</option>
+    <option value="13px">13</option><option value="14px" selected>14</option>
+    <option value="16px">16</option><option value="18px">18</option><option value="20px">20</option>
+  </select>
+  <div class="toolbar-sep"></div>
+  <button class="tb-btn" title="Căn trái" onclick="fmt('justifyLeft')">≡L</button>
+  <button class="tb-btn" title="Căn giữa" onclick="fmt('justifyCenter')">≡C</button>
+  <button class="tb-btn" title="Căn phải" onclick="fmt('justifyRight')">≡R</button>
+  <div class="toolbar-sep"></div>
+  <button class="tb-btn" title="Danh sách chấm" onclick="fmt('insertUnorderedList')">• —</button>
+  <button class="tb-btn" title="Danh sách số" onclick="fmt('insertOrderedList')">1.</button>
+  <div class="toolbar-sep"></div>
+  <button class="tb-btn" title="Tô vàng" onclick="hl('#fff59d')" style="background:#fff59d;color:#666">A</button>
+  <button class="tb-btn" title="Tô xanh lá" onclick="hl('#c8e6c9')" style="background:#c8e6c9;color:#2e7d32">A</button>
+  <button class="tb-btn" title="Tô xanh dương" onclick="hl('#bbdefb')" style="background:#bbdefb;color:#1565c0">A</button>
+  <button class="tb-btn" title="Tô hồng" onclick="hl('#f8bbd0')" style="background:#f8bbd0;color:#880e4f">A</button>
+  <button class="tb-btn" title="Bỏ highlight" onclick="hl('transparent')" style="font-size:10px">✕hl</button>
+  <div class="toolbar-sep"></div>
+  <label title="Màu chữ" style="cursor:pointer;display:flex;align-items:center">
+    <span style="font-size:13px;padding:4px 6px;border-radius:5px;border:1px solid var(--border);background:white">🎨</span>
+    <input type="color" value="#c0392b" onchange="setColor(this.value)" style="width:0;height:0;opacity:0;position:absolute">
+  </label>
+  <div class="toolbar-sep"></div>
+  <button class="tb-btn" title="Thụt lề vào" onclick="fmt('indent')">→|</button>
+  <button class="tb-btn" title="Thụt lề ra" onclick="fmt('outdent')">|←</button>
+  <div class="toolbar-sep"></div>
+  <button class="tb-btn" style="width:auto;padding:0 7px;font-size:11px" title="Chèn ngày hôm nay (Ctrl+Shift+D)" onclick="insertDate()">📅 Ngày</button>
+  <button class="tb-btn" style="width:auto;padding:0 7px;font-size:11px" onclick="ins('⭐')">⭐</button>
+  <button class="tb-btn" style="width:auto;padding:0 7px;font-size:11px" onclick="ins('→')">→</button>
+  <button class="tb-btn" style="width:auto;padding:0 7px;font-size:11px" title="Chèn checkbox (Ctrl+Shift+C)" onclick="ins('☐ ')">☐</button>
+  <div class="toolbar-sep"></div>
+  <button class="tb-btn" style="width:auto;padding:0 7px;font-size:10px;color:#999" onclick="fmt('removeFormat')">✕fmt</button>
+  <button class="tb-btn" style="width:auto;padding:0 7px;font-size:11px" onclick="showModal()">⌨️ Phím tắt</button>
+</div>
+
+<div class="resize-bar">
+  <span>⚙ Tuỳ chỉnh:</span>
+  <label>Cột Cues <input type="range" min="120" max="300" value="200" oninput="resizeCue(this.value)"> <span class="resize-val" id="valCue">200px</span></label>
+  <label>Tóm tắt <input type="range" min="60" max="220" value="110" oninput="resizeSum(this.value)"> <span class="resize-val" id="valSum">110px</span></label>
+  <label>Cỡ chữ <input type="range" min="11" max="18" value="14" oninput="resizeFont(this.value)"> <span class="resize-val" id="valFont">14px</span></label>
+  <label style="margin-left:auto"><input type="checkbox" checked onchange="toggleLines(this.checked)"> Dòng kẻ</label>
+  <label><input type="checkbox" onchange="toggleFocus(this.checked)"> Tập trung</label>
+</div>
+
+<div class="notes-container" id="notesContainer">
+  <div class="cornell-page" id="cornellPage">
+    <div class="page-header">
+      <div class="page-header-grid">
+        <div class="ph-field"><div class="ph-label">Chủ đề / Tiêu đề bài</div><input class="ph-input" id="ph-topic" placeholder="Nhập chủ đề bài học…"></div>
+        <div class="ph-field"><div class="ph-label">Người ghi</div><input class="ph-input" id="ph-name" placeholder="Tên…" style="width:120px"></div>
+        <div class="ph-field"><div class="ph-label">Ngày</div><input class="ph-input" id="ph-date" type="date" style="width:120px"></div>
+      </div>
+    </div>
+    <div class="cornell-body">
+      <div class="col-cue" id="colCue" style="width:200px">
+        <div class="col-cue-label">Cues & Keywords</div>
+        <div class="note-editor cue-editor" id="cueArea" contenteditable="true" data-placeholder="Từ khoá, câu hỏi, gợi nhớ…" data-ph="1"></div>
+      </div>
+      <div class="col-notes" id="colNotes">
+        <div class="col-notes-label">Ghi chú</div>
+        <div class="note-editor" id="notesArea" contenteditable="true" data-placeholder="Ghi nội dung chính ở đây…" data-ph="1"></div>
+      </div>
+    </div>
+    <div class="summary-section" id="summarySection" style="min-height:120px">
+      <div class="summary-label">📝 Tóm tắt (Summary)</div>
+      <div class="sum-editor" id="summaryArea" contenteditable="true" data-placeholder="Viết tóm tắt nội dung chính bằng lời của bạn…" data-ph="1"></div>
+    </div>
+  </div>
+</div>
+
+<div class="status-bar">
+  <span>Ghi chú: <b id="wc-notes">0</b> từ</span>
+  <span>Cues: <b id="wc-cues">0</b> từ</span>
+  <span>Tóm tắt: <b id="wc-sum">0</b> từ</span>
+  <span style="margin-left:auto;color:var(--ink3)">Ctrl+S lưu nháp • Ctrl+Shift+P xuất PDF</span>
+</div>
+
+<div class="modal-overlay" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕ Đóng</button>
+    <div class="modal-title">Phím tắt hữu ích</div>
+    <div class="shortcut-row"><span>In đậm / Nghiêng / Gạch chân</span><span><kbd>Ctrl+B</kbd> <kbd>Ctrl+I</kbd> <kbd>Ctrl+U</kbd></span></div>
+    <div class="shortcut-row"><span>Hoàn tác / Làm lại</span><span><kbd>Ctrl+Z</kbd> <kbd>Ctrl+Y</kbd></span></div>
+    <div class="shortcut-row"><span>Lưu nháp</span><kbd>Ctrl+S</kbd></div>
+    <div class="shortcut-row"><span>Highlight vàng nhanh</span><kbd>Ctrl+Shift+H</kbd></div>
+    <div class="shortcut-row"><span>Chèn ngày hôm nay</span><kbd>Ctrl+Shift+D</kbd></div>
+    <div class="shortcut-row"><span>Chèn checkbox</span><kbd>Ctrl+Shift+C</kbd></div>
+    <div class="shortcut-row"><span>Xuất PDF</span><kbd>Ctrl+Shift+P</kbd></div>
+    <div class="shortcut-row"><span>Chuyển vùng (Cues→Notes→Tóm tắt)</span><kbd>Ctrl+→</kbd></div>
+    <div class="shortcut-row"><span>Thụt lề vào / ra</span><span><kbd>Tab</kbd> <kbd>Shift+Tab</kbd></span></div>
+    <div class="shortcut-row"><span>Dán không định dạng</span><kbd>Ctrl+Shift+V</kbd></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- Load libs after DOM -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+// ── DOCX via pure JS (no external lib needed) ──
+// We'll build a minimal DOCX from scratch using ZIP + XML
+
+// Active editor tracking
+let activeEl = document.getElementById('notesArea');
+const editors = ['cueArea','notesArea','summaryArea'].map(id => document.getElementById(id));
+
+editors.forEach(e => {
+  e.addEventListener('focus', () => { activeEl = e; });
+  e.addEventListener('input', () => { updateWC(); managePh(e); });
+  e.addEventListener('keydown', onKey);
+});
+
+function managePh(e) {
+  e.dataset.ph = e.textContent.trim() ? '0' : '1';
+}
+
+// ── FORMAT ──
+function fmt(cmd) { if(activeEl){activeEl.focus();document.execCommand(cmd,false,null);} }
+function hl(color) { if(activeEl){activeEl.focus();document.execCommand('hiliteColor',false,color);} }
+function setColor(c) { if(activeEl){activeEl.focus();document.execCommand('foreColor',false,c);} }
+function setFontSize(sz) {
+  if(!activeEl||!sz) return;
+  activeEl.focus();
+  document.execCommand('fontSize',false,'7');
+  activeEl.querySelectorAll('font[size="7"]').forEach(s=>{s.removeAttribute('size');s.style.fontSize=sz;});
+}
+function ins(html) { if(activeEl){activeEl.focus();document.execCommand('insertHTML',false,html);} }
+function insertDate() {
+  const d = new Date().toLocaleDateString('vi-VN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  ins(`<b>${d}</b>`);
+}
+
+// ── KEYS ──
+function onKey(e) {
+  if(e.key==='Tab'){e.preventDefault();fmt(e.shiftKey?'outdent':'indent');}
+  if(e.ctrlKey&&e.key==='s'){e.preventDefault();saveDraft();}
+  if(e.ctrlKey&&e.shiftKey&&e.key==='H'){e.preventDefault();hl('#fff59d');}
+  if(e.ctrlKey&&e.shiftKey&&e.key==='D'){e.preventDefault();insertDate();}
+  if(e.ctrlKey&&e.shiftKey&&e.key==='C'){e.preventDefault();ins('☐ ');}
+  if(e.ctrlKey&&e.shiftKey&&e.key==='P'){e.preventDefault();exportPdf();}
+  if(e.ctrlKey&&e.key==='ArrowRight'){
+    e.preventDefault();
+    const i=editors.indexOf(activeEl);
+    editors[(i+1)%editors.length].focus();
+  }
+}
+document.addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='s'){e.preventDefault();saveDraft();}});
+
+// ── WORD COUNT ──
+function wc(el){const t=(el.innerText||'').trim();return t?t.split(/\s+/).length:0;}
+function updateWC(){
+  document.getElementById('wc-notes').textContent=wc(document.getElementById('notesArea'));
+  document.getElementById('wc-cues').textContent=wc(document.getElementById('cueArea'));
+  document.getElementById('wc-sum').textContent=wc(document.getElementById('summaryArea'));
+}
+
+// ── RESIZE ──
+function resizeCue(v){document.getElementById('colCue').style.width=v+'px';document.getElementById('valCue').textContent=v+'px';}
+function resizeSum(v){document.getElementById('summarySection').style.minHeight=v+'px';document.getElementById('valSum').textContent=v+'px';}
+function resizeFont(v){
+  document.getElementById('notesArea').style.fontSize=v+'px';
+  document.getElementById('cueArea').style.fontSize=(parseInt(v)-1)+'px';
+  document.getElementById('summaryArea').style.fontSize=v+'px';
+  document.getElementById('valFont').textContent=v+'px';
+}
+function toggleLines(on){
+  const bg=on?'repeating-linear-gradient(transparent,transparent calc(var(--line-h) - 1px),#e8e8f0 calc(var(--line-h) - 1px),#e8e8f0 var(--line-h))':'none';
+  ['colCue','colNotes'].forEach(id=>document.getElementById(id).style.backgroundImage=bg);
+}
+function toggleFocus(on){
+  const c=document.getElementById('notesContainer');
+  c.style.background=on?'#1a1a2e':'';
+  document.getElementById('cornellPage').style.maxWidth=on?'700px':'860px';
+}
+
+// ── DRAFT ──
+function saveDraft(){
+  const data={topic:g('ph-topic'),name:g('ph-name'),date:g('ph-date'),notes:document.getElementById('notesArea').innerHTML,cues:document.getElementById('cueArea').innerHTML,summary:document.getElementById('summaryArea').innerHTML,docTitle:g('docTitle'),docSubject:g('docSubject'),docDate:g('docDate')};
+  try{localStorage.setItem('cornell_v2',JSON.stringify(data));toast('✓ Đã lưu nháp');}catch(e){toast('⚠ Không thể lưu');}
+}
+function loadDraft(){
+  try{
+    const d=JSON.parse(localStorage.getItem('cornell_v2')||'null');
+    if(!d)return;
+    s('ph-topic',d.topic);s('ph-name',d.name);s('ph-date',d.date);
+    s('docTitle',d.docTitle);s('docSubject',d.docSubject);s('docDate',d.docDate);
+    document.getElementById('notesArea').innerHTML=d.notes||'';
+    document.getElementById('cueArea').innerHTML=d.cues||'';
+    document.getElementById('summaryArea').innerHTML=d.summary||'';
+    editors.forEach(managePh);updateWC();
+  }catch(e){}
+}
+function g(id){return document.getElementById(id)?.value||'';}
+function s(id,v){const el=document.getElementById(id);if(el&&v)el.value=v;}
+
+// ── TOAST ──
+function toast(msg,dur=2200){const t=document.getElementById('toast');t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',dur);}
+
+// ── MODAL ──
+function showModal(){document.getElementById('modal').classList.add('open');}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+
+// ── EXPORT PDF ──
+async function exportPdf(){
+  toast('⏳ Đang tạo PDF…',8000);
+  try{
+    const {jsPDF}=window.jspdf;
+    const page=document.getElementById('cornellPage');
+    const canvas=await html2canvas(page,{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false});
+    const imgData=canvas.toDataURL('image/jpeg',0.95);
+    const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const pw=pdf.internal.pageSize.getWidth();
+    const ph=pdf.internal.pageSize.getHeight();
+    const imgH=(canvas.height/canvas.width)*pw;
+    let y=0,rem=imgH;
+    while(rem>0){
+      if(y>0)pdf.addPage();
+      pdf.addImage(imgData,'JPEG',0,-y,pw,imgH);
+      y+=ph;rem-=ph;
+    }
+    pdf.save((g('ph-topic')||'cornell-notes')+'.pdf');
+    toast('✓ Đã xuất PDF!');
+  }catch(err){console.error(err);toast('⚠ Lỗi PDF: '+err.message);}
+}
+
+// ── EXPORT DOCX (thuần JS, dùng Blob + ZIP thủ công) ──
+// Dùng cách đáng tin cậy hơn: tạo HTML document rồi dùng mhtml trick
+// Thực ra dùng docx thư viện từ cdn.jsdelivr.net (UMD build)
+
+document.getElementById('btnDocx').addEventListener('click', exportDocx);
+document.getElementById('btnPdf').addEventListener('click', exportPdf);
+
+async function loadDocxLib(){
+  return new Promise((resolve,reject)=>{
+    if(window._docxLib){resolve(window._docxLib);return;}
+    const s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js';
+    s.onload=()=>{
+      // The UMD bundle exposes itself as window.docx
+      if(window.docx){window._docxLib=window.docx;resolve(window.docx);}
+      else reject(new Error('docx global not found after load'));
+    };
+    s.onerror=()=>reject(new Error('Không tải được thư viện docx'));
+    document.head.appendChild(s);
+  });
+}
+
+async function exportDocx(){
+  toast('⏳ Đang tải thư viện và tạo file…',10000);
+  try{
+    const lib = await loadDocxLib();
+    const {Document,Packer,Paragraph,TextRun,Table,TableRow,TableCell,
+           WidthType,BorderStyle,ShadingType,AlignmentType,VerticalAlign}=lib;
+
+    const topic=g('ph-topic')||'Cornell Notes';
+    const name=g('ph-name');
+    const date=g('ph-date');
+    const notesText=document.getElementById('notesArea').innerText||'';
+    const cuesText=document.getElementById('cueArea').innerText||'';
+    const summaryText=document.getElementById('summaryArea').innerText||'';
+
+    const red={style:BorderStyle.SINGLE,size:4,color:'C0392B'};
+    const thin={style:BorderStyle.SINGLE,size:1,color:'DDDDDD'};
+    const none={style:BorderStyle.NONE,size:0,color:'FFFFFF'};
+
+    function lines(txt){
+      const ls=txt.split('\n').filter(l=>l.trim());
+      if(!ls.length)ls.push('');
+      return ls.map(l=>new Paragraph({spacing:{after:80},children:[new TextRun({text:l,size:22,font:'Arial'})]}));
+    }
+
+    // Header row spanning both cols
+    const hRow=new TableRow({children:[
+      new TableCell({
+        columnSpan:2,
+        width:{size:9360,type:WidthType.DXA},
+        borders:{top:thin,bottom:red,left:thin,right:thin},
+        shading:{fill:'1A1A2E',type:ShadingType.CLEAR},
+        margins:{top:100,bottom:100,left:160,right:160},
+        children:[
+          new Paragraph({children:[new TextRun({text:topic,bold:true,size:30,color:'FFFFFF',font:'Arial'})]}),
+          new Paragraph({spacing:{before:40},children:[new TextRun({text:(name?name+' • ':'')+date,size:18,color:'AAAAAA',font:'Arial'})]})
+        ]
+      })
+    ]});
+
+    // Label row
+    const lRow=new TableRow({children:[
+      new TableCell({
+        width:{size:2520,type:WidthType.DXA},
+        borders:{top:none,bottom:thin,left:none,right:red},
+        shading:{fill:'FDECEA',type:ShadingType.CLEAR},
+        margins:{top:60,bottom:60,left:120,right:120},
+        children:[new Paragraph({children:[new TextRun({text:'CUES & KEYWORDS',bold:true,size:16,color:'C0392B',font:'Arial'})]})]
+      }),
+      new TableCell({
+        width:{size:6840,type:WidthType.DXA},
+        borders:{top:none,bottom:thin,left:none,right:none},
+        shading:{fill:'F5F5F5',type:ShadingType.CLEAR},
+        margins:{top:60,bottom:60,left:120,right:120},
+        children:[new Paragraph({children:[new TextRun({text:'GHI CHÚ',bold:true,size:16,color:'666666',font:'Arial'})]})]
+      })
+    ]});
+
+    // Content row
+    const cRow=new TableRow({children:[
+      new TableCell({
+        width:{size:2520,type:WidthType.DXA},
+        borders:{top:none,bottom:none,left:none,right:red},
+        shading:{fill:'FFFDF9',type:ShadingType.CLEAR},
+        margins:{top:100,bottom:200,left:120,right:120},
+        children:lines(cuesText)
+      }),
+      new TableCell({
+        width:{size:6840,type:WidthType.DXA},
+        borders:{top:none,bottom:none,left:none,right:none},
+        shading:{fill:'FFFFFF',type:ShadingType.CLEAR},
+        margins:{top:100,bottom:200,left:120,right:120},
+        children:lines(notesText)
+      })
+    ]});
+
+    // Summary row
+    const sRow=new TableRow({children:[
+      new TableCell({
+        columnSpan:2,
+        width:{size:9360,type:WidthType.DXA},
+        borders:{top:red,bottom:thin,left:thin,right:thin},
+        shading:{fill:'FFFFFF',type:ShadingType.CLEAR},
+        margins:{top:80,bottom:120,left:160,right:160},
+        children:[
+          new Paragraph({spacing:{after:60},children:[new TextRun({text:'TÓM TẮT (SUMMARY)',bold:true,size:18,color:'C0392B',font:'Arial'})]}),
+          ...lines(summaryText)
+        ]
+      })
+    ]});
+
+    const table=new Table({
+      width:{size:9360,type:WidthType.DXA},
+      columnWidths:[2520,6840],
+      rows:[hRow,lRow,cRow,sRow]
+    });
+
+    const doc=new Document({
+      sections:[{
+        properties:{page:{size:{width:12240,height:15840},margin:{top:1080,right:1080,bottom:1080,left:1080}}},
+        children:[table]
+      }]
+    });
+
+    const blob=await Packer.toBlob(doc);
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=(topic||'cornell')+'.docx';a.click();
+    URL.revokeObjectURL(url);
+    toast('✓ Đã xuất .docx thành công!');
+  }catch(err){
+    console.error(err);
+    toast('⚠ Lỗi docx: '+err.message);
+  }
+}
+
+// ── INIT ──
+document.getElementById('ph-date').valueAsDate=new Date();
+document.getElementById('docDate').valueAsDate=new Date();
+loadDraft();
+updateWC();
+</script>
+</body>
+</html>
