@@ -950,43 +950,61 @@ body.dark .spin{border-color:#2a2a3e;border-top-color:#e74c3c}
 
 <!-- Guide modal -->
 <div class="overlay" id="modal-guide" onclick="if(event.target===this)closeModal('modal-guide')">
-  <div class="mbox" style="max-width:600px">
+  <div class="mbox" style="max-width:700px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <span class="mtitle" style="margin:0">📖 Hướng dẫn sử dụng</span>
+      <span class="mtitle" style="margin:0">📖 Hướng dẫn sử dụng chi tiết</span>
       <button class="mclose" onclick="closeModal('modal-guide')">✕</button>
     </div>
     <div style="font-size:13px; color:var(--ink2); line-height:1.6; font-family:'DM Sans', sans-serif;">
       
-      <div style="margin-bottom:12px; padding:10px; background:var(--paper2); border-radius:var(--r); border:1px solid var(--border);">
-        <b style="color:var(--accent)">Phương pháp Cornell là gì?</b><br>
-        Chia trang thành 3 phần: <b>Cues</b> (Từ khóa/Câu hỏi ở cột trái), <b>Ghi chú</b> (Nội dung chính ở cột phải), và <b>Tóm tắt</b> (Ý chính ở dưới cùng).
+      <div style="margin-bottom:16px; padding:12px; background:var(--accent-dim); border-radius:var(--r); border:1px solid var(--accent); color:var(--ink);">
+        <b style="color:var(--accent); font-size: 14px;">1. Phương pháp Cornell là gì?</b><br>
+        Đây là hệ thống ghi chép khoa học chia trang giấy thành 3 phần rõ rệt:
+        <ul style="margin-top: 6px; padding-left: 20px;">
+          <li><b>Cột Ghi chú (Notes - Phía phải):</b> Nơi bạn ghi chép nội dung chính trong quá trình học. Hãy dùng gạch đầu dòng, viết tắt và sơ đồ.</li>
+          <li><b>Cột Cues (Từ khóa/Câu hỏi - Phía trái):</b> Sau khi học xong, hãy viết các từ khóa, câu hỏi ôn tập gợi nhớ đến nội dung ở cột Ghi chú.</li>
+          <li><b>Phần Tóm tắt (Summary - Dưới cùng):</b> Tổng hợp lại toàn bộ bài học bằng 1-2 câu ngắn gọn theo cách hiểu của bạn.</li>
+        </ul>
       </div>
 
-      <b style="color:var(--ink); font-size:14px; display:block; margin-top:16px; margin-bottom:6px">✨ Các tính năng nổi bật</b>
+      <b style="color:var(--ink); font-size:14px; display:block; margin-top:16px; margin-bottom:6px">2. Quản lý Trang & Không gian làm việc</b>
       <ul style="padding-left:20px; margin-bottom:12px; display:flex; flex-direction:column; gap:6px;">
-        <li><b>Quản lý đa trang:</b> Bấm <code>+ Trang mới</code> ở thanh dưới. Đổi tên trang bằng cách <i>click đúp</i> vào tên tab.</li>
-        <li><b>Trợ lý AI:</b> Ở tab <kbd>AI ✨</kbd>, bạn có thể dùng AI để <i>tự động tóm tắt</i> ghi chú hoặc <i>tạo câu hỏi gợi nhớ (Cues)</i>.</li>
-        <li><b>Thẻ Flashcard (🃏):</b> Tự động tạo thẻ ghi nhớ từ cột Cues và Ghi chú để ôn tập (phím <code>Space</code> để lật, mũi tên để chuyển).</li>
-        <li><b>Pomodoro (🍅):</b> Bộ đếm giờ tập trung ở góc dưới, theo chu kỳ 25 phút làm / 5 phút nghỉ.</li>
-        <li><b>Liên kết Wiki:</b> Gõ <code>[[Tên trang]]</code> để tạo đường dẫn liên kết nhanh giữa các trang với nhau.</li>
+        <li><b>Đa trang (Tabs):</b> Nhấn <code>+ Trang mới</code> ở thanh dưới cùng. Để đổi tên, hãy <i>click đúp (double-click)</i> vào tên trang.</li>
+        <li><b>Gắn thẻ (Tags):</b> Vào tab <kbd>Trang</kbd> > bấm <code>+ tag</code> để phân loại bài học. Bạn có thể bấm vào các thẻ ở mục Lọc để chỉ xem các trang thuộc thẻ đó.</li>
+        <li><b>Liên kết Wiki:</b> Gõ <code>[[Tên trang]]</code> (VD: <code>[[Toán Đại Số]]</code>) ngay trong văn bản để tạo đường dẫn liên kết nhanh giữa các trang với nhau.</li>
       </ul>
 
-      <b style="color:var(--ink); font-size:14px; display:block; margin-top:16px; margin-bottom:6px">🎨 Tùy chỉnh giao diện</b>
+      <b style="color:var(--ink); font-size:14px; display:block; margin-top:16px; margin-bottom:6px">3. Trợ lý AI Thông minh (Tab AI ✨)</b>
       <ul style="padding-left:20px; margin-bottom:12px; display:flex; flex-direction:column; gap:6px;">
-        <li><b>Tab Định dạng:</b> Chỉnh sửa font, màu chữ, highlight, chèn checklist (<code>Ctrl+Shift+C</code>).</li>
-        <li><b>Tab Trang:</b> Đổi loại giấy (kẻ ngang, ô vuông...), điều chỉnh độ rộng các cột, đổi màu chủ đạo, bật chế độ Dark Mode.</li>
-        <li><b>Chế độ Typewriter:</b> Bật trong tab <i>Trang</i> để giữ dòng bạn đang gõ luôn ở giữa màn hình, giúp tập trung tối đa.</li>
+        <li><b>Tự động tóm tắt:</b> Bấm <kbd>✨ Tóm tắt ghi chú</kbd>, AI sẽ đọc toàn bộ nội dung bạn viết và tự động tạo 1 đoạn tóm tắt cùng 3 câu hỏi ôn tập.</li>
+        <li><b>Gợi ý Cues:</b> Bấm <kbd>✨ Gợi ý Cues</kbd>, AI sẽ quét cột Ghi chú và tự động trích xuất các từ khóa/câu hỏi ôn tập vào cột Cues cho bạn.</li>
       </ul>
 
-      <b style="color:var(--ink); font-size:14px; display:block; margin-top:16px; margin-bottom:6px">💾 Lưu trữ & Xuất file</b>
+      <b style="color:var(--ink); font-size:14px; display:block; margin-top:16px; margin-bottom:6px">4. Công cụ Ôn tập & Thống kê (Tab Công cụ)</b>
       <ul style="padding-left:20px; margin-bottom:12px; display:flex; flex-direction:column; gap:6px;">
-        <li>Dữ liệu <b>tự động lưu</b> cục bộ trên trình duyệt của bạn một cách an toàn.</li>
-        <li>Hỗ trợ xuất nội dung ra định dạng <b>.docx</b>, <b>.pdf</b> hoặc <b>in trực tiếp</b>.</li>
+        <li><b>Flashcard (Thẻ ghi nhớ 🃏):</b> Hệ thống tự lấy nội dung từ cột Cues làm câu hỏi (mặt trước) và Ghi chú làm đáp án (mặt sau). Dùng phím <code>Space</code> để lật thẻ, mũi tên <code>←</code> <code>→</code> để chuyển bài.</li>
+        <li><b>Pomodoro (Đồng hồ 🍅):</b> Kỹ thuật tập trung 25 phút làm việc / 5 phút nghỉ (Nằm ở thanh công cụ dưới màn hình). Có âm báo khi hết giờ.</li>
+        <li><b>Mục tiêu & Thống kê:</b> Đặt mục tiêu số lượng từ cần viết mỗi ngày. Mở <kbd>📊 Thống kê</kbd> để xem chuỗi (streak) học tập và biểu đồ nhiệt (Heatmap) 60 ngày qua.</li>
+        <li><b>Template (Mẫu 📋):</b> Chèn nhanh các mẫu ghi chú cấu trúc sẵn (Họp, Đọc sách, Bài giảng...). Chú ý: <i>sẽ ghi đè nội dung hiện tại</i>.</li>
+      </ul>
+
+      <b style="color:var(--ink); font-size:14px; display:block; margin-top:16px; margin-bottom:6px">5. Tùy chỉnh Giao diện (Tab Trang)</b>
+      <ul style="padding-left:20px; margin-bottom:12px; display:flex; flex-direction:column; gap:6px;">
+        <li><b>Thay đổi giấy & Layout:</b> Chỉnh nền giấy thành kẻ ngang, chấm bi, lưới... Dùng thanh trượt để thay đổi chiều rộng các cột và cỡ chữ.</li>
+        <li><b>Chế độ Typewriter (Máy chữ):</b> Giữ dòng bạn đang gõ luôn nằm ở chính giữa màn hình, giúp cổ và mắt không phải di chuyển nhiều.</li>
+        <li><b>Màu sắc:</b> Chọn màu chủ đạo mới cho ứng dụng hoặc bật nút <code>🌙</code> ở thanh trên cùng để dùng Dark Mode (Giao diện tối).</li>
+      </ul>
+
+      <b style="color:var(--ink); font-size:14px; display:block; margin-top:16px; margin-bottom:6px">6. Lưu trữ & Xuất file</b>
+      <ul style="padding-left:20px; margin-bottom:12px; display:flex; flex-direction:column; gap:6px;">
+        <li><b>Lưu tự động:</b> Mọi thao tác gõ của bạn đều được tự động lưu thẳng vào bộ nhớ trình duyệt ngay lập tức. Cột <kbd>Đã lưu</kbd> góc phải dưới sẽ hiển thị trạng thái.</li>
+        <li><b>Xuất File:</b> Hỗ trợ xuất thành file <b>.docx</b> (Word) hoặc <b>.pdf</b>. <i>(Lưu ý: Cần có kết nối mạng internet để tải thư viện tạo file)</i>.</li>
+        <li><b>In ấn offline:</b> Nếu không có mạng, bạn có thể dùng nút <kbd>🖨 In</kbd> (Ctrl+P) để in trực tiếp hoặc lưu dưới dạng PDF qua tính năng in của hệ điều hành.</li>
       </ul>
 
     </div>
-    <div style="margin-top:20px; text-align:right;">
-      <button class="rb-pill on" onclick="closeModal('modal-guide')" style="margin-left:auto; display:inline-flex;">Đã hiểu</button>
+    <div style="margin-top:20px; text-align:right; border-top: 1px solid var(--border); padding-top: 16px;">
+      <button class="rb-pill on" onclick="closeModal('modal-guide')" style="margin-left:auto; display:inline-flex;">Tuyệt vời, tôi đã hiểu!</button>
     </div>
   </div>
 </div>
